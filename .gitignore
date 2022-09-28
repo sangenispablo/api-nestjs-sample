@@ -1,3 +1,9 @@
+# BD atada a Docker
+/postgres
+
+# variables de entorno
+.env
+
 # compiled output
 /dist
 /node_modules

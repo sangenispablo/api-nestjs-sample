@@ -11,23 +11,35 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  email String
-  hash String
+  email String @unique
+  hash  String
 
   firstName String?
-  lastName String?
+  lastName  String?
+
+  // este campo sale de crear la relation en Bookmark
+  bookmarks Bookmark[]
+
+  // para darle mi propio nombre a la tabla uso
+  @@map("users")
 }
 
 model Bookmark {
-  id Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  title String
+  title       String
   description String?
-  link String
+  link        String
+
+  // Creamos la relation muchos a uno contra User
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  @@map("bookmarks")
 }

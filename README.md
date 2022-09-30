@@ -10,3 +10,15 @@ yarn
 ```
 docker-compose up -d
 ```
+### Si queremos reiniciar la BD, borrar el contenedor en el Dashboard de Docker y luego:
+```
+npx prisma migrate deploy
+```
+### Tambien se puede usar los scripts en packaje.json
+```
+"db:dev:restart": "yarn db:dev:rm && yarn db:dev:up && sleep 2 && yarn prisma:dev:deploy"
+```
+### Para ver los datos que tienen los modelos (tablas) se puede usar:
+```
+npx prisma studio
+```

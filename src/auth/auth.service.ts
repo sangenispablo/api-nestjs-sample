@@ -8,10 +8,21 @@ import { AuthDto } from './dto/auth.dto';
 
 @Injectable({})
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
-  login() {
-    return { msg: 'Te estas logeando' };
+  async login(dto: AuthDto) {
+    // buscamos el usuario si no esta throw error
+    const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    if (!user) {
+      throw new ForbiddenException('Credenciales incorrectas');
+    }
+    // Comparo el password con argon2
+    const pwMatches = await argon.verify(user.hash, dto.password);
+    if (!pwMatches) {
+      throw new ForbiddenException('Credenciales incorrectas');
+    }
+    delete user.hash;
+    return user;
   }
 
   async register(dto: AuthDto) {
@@ -31,9 +42,10 @@ export class AuthService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new ForbiddenException('Credenciales tomadas');
+          throw new ForbiddenException('Credenciales incorrectas');
         }
       }
+      throw error;
     }
   }
 }
